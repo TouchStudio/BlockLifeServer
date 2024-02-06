@@ -1,0 +1,6 @@
+name: SkyBlock
+version: '${version}'
+main: club.blocklife.skyblock.SkyBlock
+api-version: '1.20'
+authors: [XuFangGG]
+description: skyblockplugin
