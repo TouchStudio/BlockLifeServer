@@ -1,3 +1,3 @@
 Blocklife Plugins
-BlocklifeLobby
+Blocklife-Bungeecord
 By:BaicaijunOvO
