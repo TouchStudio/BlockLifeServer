@@ -1,13 +1,13 @@
-package club.blocklife.skyblock;
+package club.blocklife.touch.blocklifeserver;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
-public final class SkyBlock extends JavaPlugin {
+public final class BlocklifeServer extends JavaPlugin {
 
     @Override
     public void onEnable() {
         // Plugin startup logic
-        
+
     }
 
     @Override

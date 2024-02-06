@@ -1,0 +1,4 @@
+name: BlocklifeServer
+version: '${version}'
+main: club.blocklife.touch.blocklifeserver.BlocklifeServer
+api-version: '1.20'
