@@ -1,0 +1,3 @@
+name: Blocklife-BungeeCord
+version: '${version}'
+main: club.blocklife.touch.blocklifebungeecord.Blocklife_BungeeCord
