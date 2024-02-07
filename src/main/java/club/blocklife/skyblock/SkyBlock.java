@@ -1,8 +1,6 @@
 package club.blocklife.skyblock;
 
-import club.blocklife.skyblock.util.ChatUtil;
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
+import club.blocklife.skyblock.utils.ChatUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
