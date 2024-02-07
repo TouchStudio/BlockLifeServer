@@ -1,5 +1,6 @@
 package club.blocklife.touch.skyblockexpansion;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -16,34 +17,34 @@ public class DeathHead implements Listener {
     @EventHandler
     public void onPlayerDeath(PlayerDeathEvent event) {
         String killerHeadItem = null;
-        //»ñÈ¡ËÀÍöÍæ¼ÒµÄÊµÌå
+        //è·å–æ­»äº¡ç©å®¶çš„å®ä½“
         Player player = event.getEntity();
         if (player.getKiller() != null) {
-            //´´½¨Íæ¼ÒÍ·Â­
+            //åˆ›å»ºç©å®¶å¤´é¢…
             ItemStack head = new ItemStack(Material.PLAYER_HEAD, 1);
-            //»ñÈ¡Í·Â­µÄÔªÊı¾İ
+            //è·å–å¤´é¢…çš„å…ƒæ•°æ®
             SkullMeta headMeta = (SkullMeta) head.getItemMeta();
-            //ÉèÖÃÍ·Â­µÄËùÓĞÕß
+            //è®¾ç½®å¤´é¢…çš„æ‰€æœ‰è€…
             headMeta.setOwner(player.getName());
-            //ÉèÖÃÍ·Â­µÄÔªÊı¾İ
+            //è®¾ç½®å¤´é¢…çš„å…ƒæ•°æ®
             head.setItemMeta(headMeta);
-            //»ñÈ¡Í·Â­µÄÔªÊı¾İ
+            //è·å–å¤´é¢…çš„å…ƒæ•°æ®
             ItemMeta itemMeta = head.getItemMeta();
-            //ÉèÖÃÍ·Â­µÄÃû³Æ
-            itemMeta.setDisplayName("¡ìc¡ìl" + player.getName() + "µÄËÀÍöÍ·Â­");
-            if (player.getKiller().getInventory().getItemInHand().getItemMeta().getDisplayName() == null) {
-                killerHeadItem = player.getKiller().getInventory().getItemInHand().getType().toString();
+            //è®¾ç½®å¤´é¢…çš„åç§°
+            itemMeta.setDisplayName("Â§cÂ§l" + player.getName() + "çš„æ­»äº¡å¤´é¢…");
+            if (player.getKiller().getInventory().getItemInMainHand().getItemMeta().getDisplayName() != "") {
+                killerHeadItem = player.getKiller().getInventory().getItemInMainHand().getItemMeta().getDisplayName();
             } else {
-                killerHeadItem = player.getKiller().getInventory().getItemInHand().getItemMeta().getDisplayName();
+                killerHeadItem = player.getKiller().getInventory().getItemInMainHand().getType().toString();
             }
             System.out.println(killerHeadItem);
-            //ÉèÖÃÍ·Â­µÄÃèÊö
+            //è®¾ç½®å¤´é¢…çš„æè¿°
             List<String> itemlore = new ArrayList<>();
-            itemlore.add("¡ìf»÷É±Õß ¡ìc" + player.getKiller().getName());
-            itemlore.add("¡ìfÊ¹ÓÃµÄÎäÆ÷ ¡ìc" + killerHeadItem);
+            itemlore.add("Â§få‡»æ€è€… Â§c" + player.getKiller().getName());
+            itemlore.add("Â§fä½¿ç”¨çš„æ­¦å™¨ Â§c" + killerHeadItem);
             itemMeta.setLore(itemlore);
             head.setItemMeta(itemMeta);
-            //ÔÚÍæ¼ÒËÀÍö´¦µôÂäÍ·Â­
+            //åœ¨ç©å®¶æ­»äº¡å¤„æ‰è½å¤´é¢…
             player.getWorld().dropItemNaturally(player.getLocation(), head);
         }
     }

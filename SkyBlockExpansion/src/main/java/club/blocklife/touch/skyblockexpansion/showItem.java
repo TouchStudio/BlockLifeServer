@@ -19,7 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 public class showItem implements CommandExecutor, Listener {
-    public static Inventory showItemGui = Bukkit.createInventory(null, 27, "展示物品");
+    public static Inventory showItemGui = Bukkit.createInventory(null, 27, "灞曠ず鐗╁搧");
 
 
     @Override

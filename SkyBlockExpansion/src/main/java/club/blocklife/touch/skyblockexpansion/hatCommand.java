@@ -15,7 +15,7 @@ public class hatCommand implements CommandExecutor {
         if (player.getInventory().getItemInHand() != null){
             handItem = player.getInventory().getItemInHand();
         }else {
-            player.sendMessage("¡ìc[¡ìbBloc¡ìc]¡ìf ÄúµÄÊÖÉÏÃ»ÓĞÎïÆ·£¡");
+            player.sendMessage("Â§c[Â§bBlocÂ§c]Â§f æ‚¨çš„æ‰‹ä¸Šæ²¡æœ‰ç‰©å“ï¼");
             return false;
         }
 
@@ -24,7 +24,7 @@ public class hatCommand implements CommandExecutor {
         }
         player.getInventory().setHelmet(handItem);
         player.getInventory().setItemInHand(helmetItem);
-        player.sendMessage("¡ìa[¡ìbBlockLife¡ìa]¡ìf Äú´øÉÏÁËĞÂÃ±×Ó£¡");
+        player.sendMessage("Â§a[Â§bBlockLifeÂ§a]Â§f æ‚¨å¸¦ä¸Šäº†æ–°å¸½å­ï¼");
         return false;
     }
 }

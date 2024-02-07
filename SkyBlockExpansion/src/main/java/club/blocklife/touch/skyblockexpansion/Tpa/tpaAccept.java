@@ -18,26 +18,26 @@ public class tpaAccept implements CommandExecutor {
         if (player != null) {
             if (SkyBlockExpansion.tpaList.contains(player.getName())) {
                 Location tpaPlayerLocation = player.getLocation();
-                Tpa.tpaPlayer.sendMessage("¡ìa[¡ìbBlockLife¡ìa]¡ìf ½«ÔÚ3Ãëºó´«ËÍ");
-                player.sendMessage("¡ìa[¡ìbBlockLife¡ìa]¡ìf Íæ¼Ò½«ÔÚ3Ãëºó´«ËÍµ½ÄúÉí±ß");
+                Tpa.tpaPlayer.sendMessage("Â§a[Â§bBlockLifeÂ§a]Â§f å°†åœ¨3ç§’åä¼ é€");
+                player.sendMessage("Â§a[Â§bBlockLifeÂ§a]Â§f ç©å®¶å°†åœ¨3ç§’åä¼ é€åˆ°æ‚¨èº«è¾¹");
                 new BukkitRunnable(){
 
                     @Override
                     public void run() {
                         Tpa.tpaPlayer.teleport(tpaPlayerLocation);
                         SkyBlockExpansion.tpaList.remove(player.getName());
-                        Tpa.tpaPlayer.sendMessage("¡ìa[¡ìbBlockLife¡ìa]¡ìf ÒÑ´«ËÍ");
-                        player.sendMessage("¡ìa[¡ìbBlockLife¡ìa]¡ìf " + Tpa.tpaPlayer.getName() + " ÒÑ´«ËÍµ½ÄúÉí±ß");
+                        Tpa.tpaPlayer.sendMessage("Â§a[Â§bBlockLifeÂ§a]Â§f å·²ä¼ é€");
+                        player.sendMessage("Â§a[Â§bBlockLifeÂ§a]Â§f " + Tpa.tpaPlayer.getName() + " å·²ä¼ é€åˆ°æ‚¨èº«è¾¹");
                         getScheduler().cancelTasks(SkyBlockExpansion.getPlugin(SkyBlockExpansion.class));
                     }
                 }.runTaskLater(SkyBlockExpansion.getPlugin(SkyBlockExpansion.class), 20 * 3);
 
             } else {
-                player.sendMessage("¡ìa[¡ìbBlockLife¡ìa]¡ìf ÄúÃ»ÓĞ´«ËÍÇëÇó");
+                player.sendMessage("Â§a[Â§bBlockLifeÂ§a]Â§f æ‚¨æ²¡æœ‰ä¼ é€è¯·æ±‚");
             }
 
         } else {
-            Bukkit.getConsoleSender().sendMessage("¡ìa[¡ìbSkyBlockExpansion¡ìa]¡ìf ÎŞ·¨ÔÚ¿ØÖÆÌ¨Ê¹ÓÃ´ËÃüÁî");
+            Bukkit.getConsoleSender().sendMessage("Â§a[Â§bSkyBlockExpansionÂ§a]Â§f æ— æ³•åœ¨æ§åˆ¶å°ä½¿ç”¨æ­¤å‘½ä»¤");
         }
         return false;
     }

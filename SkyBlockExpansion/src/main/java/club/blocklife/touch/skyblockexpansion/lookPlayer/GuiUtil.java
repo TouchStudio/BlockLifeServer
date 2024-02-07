@@ -74,7 +74,7 @@ public class GuiUtil {
         } else {
             item = new ItemStack(Material.BARRIER);
             im = item.getItemMeta();
-            im.setDisplayName("¡ìc¸Ã×°±¸²ÛÄ¿Ç°ÊÇ¿ÕµÄ");
+            im.setDisplayName("Â§cè¯¥è£…å¤‡æ§½ç›®å‰æ˜¯ç©ºçš„");
             item.setItemMeta(im);
             inv.setItem(13, item);
         }
@@ -84,7 +84,7 @@ public class GuiUtil {
         } else {
             item = new ItemStack(Material.BARRIER);
             im = item.getItemMeta();
-            im.setDisplayName("¡ìc¸Ã×°±¸²ÛÄ¿Ç°ÊÇ¿ÕµÄ");
+            im.setDisplayName("Â§cè¯¥è£…å¤‡æ§½ç›®å‰æ˜¯ç©ºçš„");
             item.setItemMeta(im);
             inv.setItem(22, item);
         }
@@ -94,7 +94,7 @@ public class GuiUtil {
         } else {
             item = new ItemStack(Material.BARRIER);
             im = item.getItemMeta();
-            im.setDisplayName("¡ìc¸Ã×°±¸²ÛÄ¿Ç°ÊÇ¿ÕµÄ");
+            im.setDisplayName("Â§cè¯¥è£…å¤‡æ§½ç›®å‰æ˜¯ç©ºçš„");
             item.setItemMeta(im);
             inv.setItem(31, item);
         }
@@ -104,7 +104,7 @@ public class GuiUtil {
         } else {
             item = new ItemStack(Material.BARRIER);
             im = item.getItemMeta();
-            im.setDisplayName("¡ìc¸Ã×°±¸²ÛÄ¿Ç°ÊÇ¿ÕµÄ");
+            im.setDisplayName("Â§cè¯¥è£…å¤‡æ§½ç›®å‰æ˜¯ç©ºçš„");
             item.setItemMeta(im);
             inv.setItem(40, item);
         }
@@ -114,7 +114,7 @@ public class GuiUtil {
         } else {
             item = new ItemStack(Material.BARRIER);
             im = item.getItemMeta();
-            im.setDisplayName("¡ìc¸Ã×°±¸²ÛÄ¿Ç°ÊÇ¿ÕµÄ");
+            im.setDisplayName("Â§cè¯¥è£…å¤‡æ§½ç›®å‰æ˜¯ç©ºçš„");
             item.setItemMeta(im);
             inv.setItem(21, item);
         }
@@ -125,21 +125,21 @@ public class GuiUtil {
             } else {
                 item = new ItemStack(Material.BARRIER);
                 im = item.getItemMeta();
-                im.setDisplayName("¡ìc¸Ã×°±¸²ÛÄ¿Ç°ÊÇ¿ÕµÄ");
+                im.setDisplayName("Â§cè¯¥è£…å¤‡æ§½ç›®å‰æ˜¯ç©ºçš„");
                 item.setItemMeta(im);
                 inv.setItem(23, item);
             }
         } else {
             item = new ItemStack(Material.WHITE_STAINED_GLASS_PANE, 1);
             im = item.getItemMeta();
-            im.setDisplayName("¡ìcÎ´ÆôÓÃ¶ÜÅÆÎ»ÖÃ");
+            im.setDisplayName("Â§cæœªå¯ç”¨ç›¾ç‰Œä½ç½®");
             item.setItemMeta(im);
             inv.setItem(23, item);
         }
 
         item = new ItemStack(Material.DARK_OAK_BUTTON, 1);
         im = item.getItemMeta();
-        im.setDisplayName("¡ìf" + lookplayer.getName());
+        im.setDisplayName("Â§f" + lookplayer.getName());
         ArrayList<String> lore = new ArrayList();
 
         String line;
@@ -156,7 +156,7 @@ public class GuiUtil {
         inv.setItem(19, item);
         item = new ItemStack(Material.WHITE_STAINED_GLASS_PANE, 1);
         im = item.getItemMeta();
-        im.setDisplayName("¡ìc¹Ø±ÕÒ³Ãæ");
+        im.setDisplayName("Â§cå…³é—­é¡µé¢");
         item.setItemMeta(im);
         inv.setItem(25, item);
         openplayer.openInventory(inv);
