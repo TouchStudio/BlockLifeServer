@@ -1,4 +1,12 @@
-name: BlocklifeServer
+name: SkyBlock
 version: '${version}'
-main: club.blocklife.touch.blocklifeserver.BlocklifeServer
+main: club.blocklife.skyblock.SkyBlock
 api-version: '1.20'
+authors: [XuFangGG]
+description: skyblockplugin
+
+commands:
+  is:
+    description: Teleport to your island.
+  island:
+    description: Teleport to your island.

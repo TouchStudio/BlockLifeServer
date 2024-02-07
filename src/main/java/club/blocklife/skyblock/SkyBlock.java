@@ -1,5 +1,9 @@
 package club.blocklife.skyblock;
 
+import club.blocklife.skyblock.commands.IslandCommand;
+import club.blocklife.skyblock.listeners.IslandEvent;
+import club.blocklife.skyblock.listeners.PlayerDamageEvent;
+import club.blocklife.skyblock.listeners.PlayerDeathEvent;
 import club.blocklife.skyblock.utils.ChatUtil;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -13,8 +17,15 @@ public final class SkyBlock extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        // Plugin startup logic
         ChatUtil.info("SkyBlock Start!");
+
+        IslandCommand islandCommand = new IslandCommand(this);
+        getServer().getPluginManager().registerEvents(new IslandEvent(this),this);
+        getServer().getPluginManager().registerEvents(new PlayerDamageEvent(islandCommand), this);
+        getServer().getPluginManager().registerEvents(new PlayerDeathEvent(islandCommand), this);
+
+        getCommand("is").setExecutor(islandCommand);
+        getCommand("island").setExecutor(islandCommand);
     }
 
     @Override
