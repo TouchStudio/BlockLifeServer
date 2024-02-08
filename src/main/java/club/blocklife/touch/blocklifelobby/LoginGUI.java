@@ -21,26 +21,34 @@ import java.util.List;
 public class LoginGUI implements Listener {
 
 
-    public Inventory menu = Bukkit.createInventory(null, 9, "²Ëµ¥");
+    public Inventory menu = Bukkit.createInventory(null, 9, "èœå•");
     public ItemStack menuItem = new ItemStack(Material.NETHER_STAR);
 
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
-        ItemStack s = new ItemStack(Material.GRASS_BLOCK);
-        ItemMeta smata = s.getItemMeta();
+        ItemStack survival= new ItemStack(Material.GRASS_BLOCK);
+        ItemStack skyBlockItem = new ItemStack(Material.OAK_WOOD);
+        ItemMeta survivalmata = survival.getItemMeta();
         ItemMeta menuItemMeta = menuItem.getItemMeta();
-        menuItemMeta.setDisplayName(ChatColor.BLUE + "²Ëµ¥");
-        smata.setDisplayName(ChatColor.GREEN + "Éú´æ");
-        List<String> slora = new ArrayList<>();
+        ItemMeta skyBlockMata = skyBlockItem.getItemMeta();
+        skyBlockMata.setDisplayName(ChatColor.YELLOW + "ç©ºå²›");
+        menuItemMeta.setDisplayName(ChatColor.BLUE + "èœå•");
+        survivalmata.setDisplayName(ChatColor.GREEN + "ç”Ÿå­˜");
+        List<String> survivallora = new ArrayList<>();
         List<String> mlora = new ArrayList<>();
-        mlora.add("¡ìlBlocklifeServer²Ëµ¥");
-        slora.add("¡ìl½øÈëÉú´æ·ş");
+        List<String> skyBlocklora = new ArrayList<>();
+        skyBlocklora.add("Â§lè¿›å…¥ç©ºå²›æœ");
+        mlora.add("Â§lBlocklifeServerèœå•");
+        survivallora.add("Â§lè¿›å…¥ç”Ÿå­˜æœ");
         menuItemMeta.setLore(mlora);
-        smata.setLore(slora);
-        s.setItemMeta(smata);
+        survivalmata.setLore(survivallora);
+        skyBlockItem.setLore(skyBlocklora);
+        skyBlockItem.setItemMeta(skyBlockMata);
+        survival.setItemMeta(survivalmata);
         menuItem.setItemMeta(menuItemMeta);
-        menu.setItem(3, s);
+        menu.setItem(3, survival);
+        menu.setItem(5,skyBlockItem);
         e.getPlayer().getInventory().setItem(4, menuItem);
     }
     @EventHandler
@@ -49,7 +57,7 @@ public class LoginGUI implements Listener {
         Action action = e.getAction();
 
         if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-            ItemStack item = e.getItem(); // »ñÈ¡Íæ¼ÒÓÒ¼üµã»÷µÄÎïÆ·
+            ItemStack item = e.getItem(); // è·å–ç©å®¶å³é”®ç‚¹å‡»çš„ç‰©å“
             if (item != null && item.isSimilar(menuItem)) {
                 player.openInventory(menu);
             }
@@ -58,11 +66,17 @@ public class LoginGUI implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent e) {
-        if (e.getView().getTitle().equals("²Ëµ¥")) {
+        if (e.getView().getTitle().equals("èœå•")) {
             e.setCancelled(true);
             if (e.getCurrentItem() != null && e.getCurrentItem().getType() == Material.GRASS_BLOCK) {
                 if (e.getWhoClicked() instanceof Player player) {
-                    BlocklifeLobby.connectToServer(player, "shengcun");
+                    BlocklifeLobby.connectToServer(player, BlocklifeLobby.config.getString("SurvivaName"));
+
+                }
+            }
+            else if (e.getCurrentItem() != null && e.getCurrentItem().getType() == Material.OAK_WOOD){
+                if (e.getWhoClicked() instanceof Player player) {
+                    BlocklifeLobby.connectToServer(player, BlocklifeLobby.config.getString("SkyBlockName"));
 
                 }
             }

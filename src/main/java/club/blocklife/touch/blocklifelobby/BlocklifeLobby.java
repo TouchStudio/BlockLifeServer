@@ -1,18 +1,25 @@
 package club.blocklife.touch.blocklifelobby;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
 
 public final class BlocklifeLobby extends JavaPlugin {
     public static BlocklifeLobby instance;
+    public static FileConfiguration config;
     @Override
     public void onEnable() {
-        Bukkit.getConsoleSender().sendMessage("¡ì6[¡ìbBlocklifeLobby¡ì6]¡ìa²å¼ş¼ÓÔØ");
+        if (!new File(getDataFolder(), "config.yml").exists()) {
+            saveDefaultConfig();
+        }
+        config = getConfig();
+        Bukkit.getConsoleSender().sendMessage("Â§6[Â§bBlocklifeLobbyÂ§6]Â§aæ’ä»¶åŠ è½½");
         getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         getServer().getPluginManager().registerEvents(new LoginGUI(), this);
         instance = this;
@@ -20,7 +27,7 @@ public final class BlocklifeLobby extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        Bukkit.getConsoleSender().sendMessage("¡ì6[¡ìbBlocklifeLobby¡ì6]¡ìa²å¼şĞ¶ÔØ");
+        Bukkit.getConsoleSender().sendMessage("Â§6[Â§bBlocklifeLobbyÂ§6]Â§aæ’ä»¶å¸è½½");
     }
 
     public static void connectToServer(Player player, String targetServer) {
@@ -31,7 +38,7 @@ public final class BlocklifeLobby extends JavaPlugin {
             out.writeUTF("Connect");
             out.writeUTF(targetServer);
         } catch (IOException e) {
-            // ´íÎó´¦Àí
+            // é”™è¯¯å¤„ç†
             e.printStackTrace();
         }
 
