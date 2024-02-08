@@ -34,6 +34,21 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
     public void stopCooldown(Player player) {
         cooldownMap.remove(player.getUniqueId());
     }
+    private boolean isPlayerInOtherIsland(UUID targetUUID) {
+        File teamDir = new File(plugin.getDataFolder(), "team");
+        File[] teamFiles = teamDir.listFiles();
+        if (teamFiles != null) {
+            for (File teamFile : teamFiles) {
+                FileConfiguration teamConfig = YamlConfiguration.loadConfiguration(teamFile);
+                String master = teamConfig.getString("master");
+                List<String> members = teamConfig.getStringList("members");
+                if (master.equals(targetUUID.toString()) || members.contains(targetUUID.toString())) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
     private void createTeam(Player master, Player member) {
         File teamDir = new File(plugin.getDataFolder(), "team");
@@ -151,6 +166,10 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
             if (args[0].equalsIgnoreCase("invite")) {
                 if (player.equals(target)) {
                     player.sendMessage(CU.t("&c你不能邀请自己"));
+                    return true;
+                }
+                if (isPlayerInOtherIsland(target.getUniqueId())) {
+                    player.sendMessage(CU.t("&c玩家已有岛屿"));
                     return true;
                 }
 
