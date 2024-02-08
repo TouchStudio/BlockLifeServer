@@ -1,3 +1,2 @@
-BlockLifeServer\n
-By:TouchStudio\n
-MCServerIP:BlockLife.club
+#BlocklifeServer Plugins
+Dev:BaicaijunOvO,XuFang,LoverMiku
