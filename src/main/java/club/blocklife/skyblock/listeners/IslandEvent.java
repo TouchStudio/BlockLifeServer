@@ -31,6 +31,49 @@ public class IslandEvent implements Listener {
         if (!playerFile.exists()) {
             Location spawnLocation = getRandomLocation();
             spawnLocation.getBlock().getRelative(0, -1, 0).setType(Material.BEDROCK);
+            spawnLocation.getBlock().getRelative(1, -1, 0).setType(Material.GRASS_BLOCK);
+            spawnLocation.getBlock().getRelative(2, -1, 0).setType(Material.GRASS_BLOCK);
+            spawnLocation.getBlock().getRelative(3, -1, 0).setType(Material.GRASS_BLOCK);
+            //树木头
+            spawnLocation.getBlock().getRelative(3, 0, 0).setType(Material.OAK_LOG);
+            spawnLocation.getBlock().getRelative(3, 1, 0).setType(Material.OAK_LOG);
+            spawnLocation.getBlock().getRelative(3, 2, 0).setType(Material.OAK_LOG);
+            spawnLocation.getBlock().getRelative(3, 3, 0).setType(Material.OAK_LOG);
+            //树叶
+            spawnLocation.getBlock().getRelative(3, 4, 0).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(4, 4, 0).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(2, 4, 0).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(3, 4, 1).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(3, 4, -1).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(2, 3, 0).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(2, 3, 1).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(2, 2, 0).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(3, 3, 1).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(4, 3, 1).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(4, 2, 0).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(4, 2, -1).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(3, 3, -1).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(1, 2, 0).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(1, 2, 1).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(1, 2, -1).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(2, 2, -1).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(2, 2, 1).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(2, 2, 2).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(2, 2, -2).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(3, 2, -1).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(3, 2, 1).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(3, 2, -2).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(3, 2, 2).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(4, 2, 0).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(4, 2, 1).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(4, 2, -1).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(4, 2, -2).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(4, 2, 2).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(5, 2, 0).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(5, 2, 1).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(5, 2, -1).setType(Material.OAK_LEAVES);
+            spawnLocation.getBlock().getRelative(5, 2, -2).setType(Material.OAK_LEAVES);
+
             player.teleport(spawnLocation);
             player.setBedSpawnLocation(spawnLocation, true);
 

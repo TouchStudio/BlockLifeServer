@@ -24,6 +24,8 @@ public final class SkyBlock extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerDamageEvent(islandCommand), this);
         getServer().getPluginManager().registerEvents(new PlayerDeathEvent(islandCommand), this);
 
+//        getCommand("quit").setExecutor(new Quit());
+
         getCommand("is").setExecutor(islandCommand);
         getCommand("island").setExecutor(islandCommand);
     }
