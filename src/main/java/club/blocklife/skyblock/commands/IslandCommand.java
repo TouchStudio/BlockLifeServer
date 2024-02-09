@@ -34,15 +34,15 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
     public void stopCooldown(Player player) {
         cooldownMap.remove(player.getUniqueId());
     }
+
     private boolean isPlayerInOtherIsland(UUID targetUUID) {
         File teamDir = new File(plugin.getDataFolder(), "team");
         File[] teamFiles = teamDir.listFiles();
         if (teamFiles != null) {
             for (File teamFile : teamFiles) {
                 FileConfiguration teamConfig = YamlConfiguration.loadConfiguration(teamFile);
-                String master = teamConfig.getString("master");
                 List<String> members = teamConfig.getStringList("members");
-                if (master.equals(targetUUID.toString()) || members.contains(targetUUID.toString())) {
+                if (members.contains(targetUUID.toString())) {
                     return true;
                 }
             }
@@ -64,7 +64,9 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
         } else {
             members = new ArrayList<>();
         }
-        members.add(member.getUniqueId().toString());
+        if (!members.contains(member.getUniqueId().toString())) { // 检查被邀请者的 UUID 是否已经在 members 列表中
+            members.add(member.getUniqueId().toString()); // 如果不在，就添加
+        }
         teamConfig.set("members", members);
         try {
             teamConfig.save(teamFile);
@@ -135,6 +137,143 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
 
         Player player = (Player) sender;
 
+        //退出岛屿 (/is leave) (/is leave confirm)
+        if (args.length == 1 && args[0].equalsIgnoreCase("leave")) {
+            player.sendMessage(CU.t("&c如果你确定要退出岛屿，请再输入一遍 /is leave confirm"));
+            return true;
+        } else if (args.length == 2 && args[0].equalsIgnoreCase("transfer")) {
+            Player target = Bukkit.getPlayer(args[1]);
+            if (target == null) {
+                player.sendMessage(CU.t("&c找不到指定的玩家"));
+                return true;
+            }
+
+            File teamFile = new File(new File(plugin.getDataFolder(), "team"), player.getUniqueId().toString() + ".yml");
+            if (!teamFile.exists()) {
+                player.sendMessage(CU.t("&c你并不拥有岛屿"));
+                return true;
+            }
+            FileConfiguration teamConfig = YamlConfiguration.loadConfiguration(teamFile);
+            String teamMaster = teamConfig.getString("master");
+            if (!player.getUniqueId().toString().equals(teamMaster)) {
+                player.sendMessage(CU.t("&c只有岛主才能转让岛主"));
+                return true;
+            }
+            List<String> members = teamConfig.getStringList("members");
+            if (!members.contains(target.getUniqueId().toString())) {
+                player.sendMessage(CU.t("&c他不是你的岛屿成员"));
+                return true;
+            }
+
+            player.sendMessage(CU.t("&c如果你确定转让岛主，请再输入一遍 /is transfer " + target.getName() + " confirm"));
+        } else if (args.length == 3 && args[0].equalsIgnoreCase("transfer") && args[2].equalsIgnoreCase("confirm")) {
+            Player target = Bukkit.getPlayer(args[1]);
+            if (target == null) {
+                player.sendMessage(CU.t("&c找不到指定的玩家"));
+                return true;
+            }
+
+            File oldTeamFile = new File(new File(plugin.getDataFolder(), "team"), player.getUniqueId().toString() + ".yml");
+            if (!oldTeamFile.exists()) {
+                player.sendMessage(CU.t("&c你并不拥有岛屿"));
+                return true;
+            }
+            FileConfiguration teamConfig = YamlConfiguration.loadConfiguration(oldTeamFile);
+            String teamMaster = teamConfig.getString("master");
+            if (!player.getUniqueId().toString().equals(teamMaster)) {
+                player.sendMessage(CU.t("&c只有岛主才能转让岛主"));
+                return true;
+            }
+            List<String> members = teamConfig.getStringList("members");
+            if (!members.contains(target.getUniqueId().toString())) {
+                player.sendMessage(CU.t("&c他不是你的岛屿成员"));
+                return true;
+            }
+
+            members.remove(target.getUniqueId().toString());
+            members.add(player.getUniqueId().toString());
+            teamConfig.set("master", target.getUniqueId().toString());
+            teamConfig.set("members", members);
+
+            File newTeamFile = new File(new File(plugin.getDataFolder(), "team"), target.getUniqueId().toString() + ".yml"); // 创建新的岛屿配置文件
+            if (newTeamFile.exists()) {
+                newTeamFile.delete();
+            }
+            oldTeamFile.renameTo(newTeamFile);
+
+            try {
+                teamConfig.save(newTeamFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // 给岛屿上的所有成员发送消息
+            for (String memberId : members) {
+                Player teamMember = Bukkit.getPlayer(UUID.fromString(memberId));
+                if (teamMember != null) {
+                    teamMember.sendMessage(CU.t("岛主已转让给 " + target.getName()));
+                }
+            }
+            Player newMaster = Bukkit.getPlayer(UUID.fromString(teamConfig.getString("master")));
+            if (newMaster != null) {
+                newMaster.sendMessage(CU.t("岛主已转让给 " + target.getName()));
+            }
+        }
+        if (args.length == 2 && args[0].equalsIgnoreCase("leave") && args[1].equalsIgnoreCase("confirm")) {
+            File teamDir = new File(plugin.getDataFolder(), "team");
+            File[] teamFiles = teamDir.listFiles();
+            if (teamFiles != null) {
+                for (File teamFile : teamFiles) {
+                    FileConfiguration teamConfig = YamlConfiguration.loadConfiguration(teamFile);
+                    String master = teamConfig.getString("master");
+                    List<String> members = teamConfig.getStringList("members");
+                    if (master.equals(player.getUniqueId().toString())) {
+                        if (members.isEmpty()) {
+                            // 如果没有其他成员，直接删除岛屿文件
+                            teamFile.delete();
+                            player.sendMessage(CU.t("&b你已经退出了岛屿"));
+                        } else {
+                            player.sendMessage(CU.t("&c你需要先转让岛屿才能退出岛屿"));
+                        }
+                        return true;
+                    } else if (members.contains(player.getUniqueId().toString())) {
+                        members.remove(player.getUniqueId().toString());
+                        teamConfig.set("members", members);
+                        try {
+                            teamConfig.save(teamFile);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+
+                        // 删除玩家在playerlocation文件夹中的文件
+                        File playerLocationFile = new File(new File(plugin.getDataFolder(), "playerlocation"), player.getUniqueId().toString() + ".yml");
+                        if (playerLocationFile.exists()) {
+                            playerLocationFile.delete();
+                        }
+
+                        // 给岛主发送消息
+                        Player teamMaster = Bukkit.getPlayer(UUID.fromString(master));
+                        if (teamMaster != null) {
+                            teamMaster.sendMessage(CU.t("&6" + player.getName() + " &b退出了岛屿"));
+                        }
+
+                        // 给岛屿上的其他成员发送消息
+                        for (String memberId : members) {
+                            Player teamMember = Bukkit.getPlayer(UUID.fromString(memberId));
+                            if (teamMember != null) {
+                                teamMember.sendMessage(CU.t("&6" + player.getName() + " &b退出了岛屿"));
+                            }
+                        }
+
+                        player.kickPlayer(CU.t("&6你退出了岛屿\n&b请重进服务器"));
+                        return true;
+                    }
+                }
+            }
+            player.sendMessage(CU.t("&c你没有加入岛屿"));
+            return true;
+        }
+
         if (args.length == 0) {
             long lastDamageTime = cooldownMap.getOrDefault(player.getUniqueId(), 0L);
             long remainingTime = 5 - (System.currentTimeMillis() - lastDamageTime) / 1000;
@@ -173,14 +312,10 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-                File teamFile = new File(new File(plugin.getDataFolder(), "team"), player.getUniqueId().toString() + ".yml");
-                if (teamFile.exists()) {
-                    FileConfiguration teamConfig = YamlConfiguration.loadConfiguration(teamFile);
-                    List<String> members = teamConfig.getStringList("members");
-                    if (members.contains(target.getUniqueId().toString())) {
-                        player.sendMessage(CU.t("&c他已经是你的岛屿成员了"));
-                        return true;
-                    }
+                // 检查邀请者是否已经是其他岛屿的成员
+                if (isPlayerInOtherIsland(player.getUniqueId())) {
+                    player.sendMessage(CU.t("&c你不是岛主，没有权限邀请玩家加入岛屿"));
+                    return true;
                 }
 
                 long lastInviteTime = inviteCooldowns.getOrDefault(player.getUniqueId(), 0L);
@@ -194,7 +329,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
 
                 player.sendMessage(CU.t("&b你邀请了&6 " + target.getName() + " &b加入你的岛屿"));
                 invites.put(target.getUniqueId(), player.getUniqueId());
-                target.sendMessage(CU.t("&b你&c被&6 " + player.getName() + " &b邀请加入他的岛屿"));
+                target.sendMessage(CU.t("&b你&c被&6 " + player.getName() + " &b邀请加入他的岛屿")); // 这行代码会给被邀请者发送一条消息
             } else if (args[0].equalsIgnoreCase("accept")) {
                 UUID inviterUUID = invites.get(player.getUniqueId());
                 if (inviterUUID == null) {
@@ -208,7 +343,7 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                     return true;
                 }
 
-                createTeam(inviter, player); // 在这里调用 createTeam 方法
+                createTeam(inviter, player); // 调用 createTeam 方法
 
                 File inviterFile = new File(new File(plugin.getDataFolder(), "playerlocation"), inviterUUID.toString() + ".yml");
                 FileConfiguration inviterConfig = YamlConfiguration.loadConfiguration(inviterFile);
@@ -229,17 +364,13 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
 
                 player.teleport(new Location(inviter.getWorld(), x, y, z));
                 player.setBedSpawnLocation(new Location(inviter.getWorld(), x, y, z), true);
-                player.sendMessage(CU.t("&b你已经加入了&6 " + inviter.getName() + " &b的岛屿"));
             } else if (args[0].equalsIgnoreCase("kick")) {
                 kickMember(player, target);
             }
-
-            return true;
-        } else {
-            player.sendMessage(CU.t("&c命令格式错误"));
-            return true;
         }
+        return true;
     }
+
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
@@ -252,6 +383,8 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
             completions.add("invite");
             completions.add("accept");
             completions.add("kick");
+            completions.add("leave");
+            completions.add("transfer");
         } else if (args.length == 2) {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 completions.add(player.getName());

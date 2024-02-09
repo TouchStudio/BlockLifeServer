@@ -20,7 +20,7 @@ public final class SkyBlock extends JavaPlugin {
         ChatUtil.info("SkyBlock Start!");
 
         IslandCommand islandCommand = new IslandCommand(this);
-        getServer().getPluginManager().registerEvents(new IslandEvent(this),this);
+        getServer().getPluginManager().registerEvents(new IslandEvent(this), this);
         getServer().getPluginManager().registerEvents(new PlayerDamageEvent(islandCommand), this);
         getServer().getPluginManager().registerEvents(new PlayerDeathEvent(islandCommand), this);
 
@@ -28,10 +28,12 @@ public final class SkyBlock extends JavaPlugin {
 
         getCommand("is").setExecutor(islandCommand);
         getCommand("island").setExecutor(islandCommand);
+
+
     }
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        ChatUtil.info("SkyBlock Stop!");
     }
 }
