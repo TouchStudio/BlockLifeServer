@@ -22,9 +22,13 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
     private final HashMap<UUID, UUID> invites = new HashMap<>();
     private final HashMap<UUID, Long> inviteCooldowns = new HashMap<>();
     private static final long INVITE_COOLDOWN = 180000; // 3 分钟
+    private final HashMap<UUID, Long> inviteExpirations = new HashMap<>();
+    private static final long INVITE_EXPIRATION = 60000;
+
 
     public IslandCommand(JavaPlugin plugin) {
         this.plugin = plugin;
+        startInviteExpirationCheck();
     }
 
     public void startCooldown(Player player) {
@@ -48,6 +52,31 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
             }
         }
         return false;
+    }
+    private void startInviteExpirationCheck() {
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            Iterator<Map.Entry<UUID, Long>> iterator = inviteExpirations.entrySet().iterator();
+            while (iterator.hasNext()) {
+                Map.Entry<UUID, Long> entry = iterator.next();
+                if (System.currentTimeMillis() > entry.getValue()) {
+                    UUID inviteeUUID = entry.getKey();
+                    UUID inviterUUID = invites.get(inviteeUUID);
+                    if (inviterUUID == null) {
+                        continue;
+                    }
+                    Player inviter = Bukkit.getPlayer(inviterUUID);
+                    Player invitee = Bukkit.getPlayer(inviteeUUID);
+                    if (inviter != null) {
+                        inviter.sendMessage(CU.t("&c你发送的请求已失效"));
+                    }
+                    if (invitee != null) {
+                        invitee.sendMessage(CU.t("&c" + inviter.getName() + " 发送的邀请已失效"));
+                    }
+                    invites.remove(inviteeUUID);
+                    iterator.remove();
+                }
+            }
+        }, 0L, 20L); // 每秒检查一次
     }
 
     private void createTeam(Player master, Player member) {
@@ -74,6 +103,8 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
             e.printStackTrace();
         }
 
+        invites.entrySet().removeIf(entry -> entry.getValue().equals(member.getUniqueId()));
+        inviteExpirations.entrySet().removeIf(entry -> entry.getKey().equals(member.getUniqueId()));
         inviteCooldowns.remove(master.getUniqueId()); // 移除邀请者冷却时间
 
         // 读取配置文件中的master和members ，并向他们发送消息
@@ -231,7 +262,13 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                         if (members.isEmpty()) {
                             // 如果没有其他成员，直接删除岛屿文件
                             teamFile.delete();
-                            player.sendMessage(CU.t("&b你已经退出了岛屿"));
+
+                            // 删除 master 在 playerlocation 文件夹中的文件
+                            File playerLocationFile = new File(new File(plugin.getDataFolder(), "playerlocation"), player.getUniqueId().toString() + ".yml");
+                            if (playerLocationFile.exists()) {
+                                playerLocationFile.delete();
+                                player.kickPlayer(CU.t("&b你已经退出了岛屿\n请重进游戏"));
+                            }
                         } else {
                             player.sendMessage(CU.t("&c你需要先转让岛屿才能退出岛屿"));
                         }
@@ -320,6 +357,9 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
 
                 long lastInviteTime = inviteCooldowns.getOrDefault(player.getUniqueId(), 0L);
                 long remainingTime = (INVITE_COOLDOWN - (System.currentTimeMillis() - lastInviteTime)) / 1000;
+                inviteCooldowns.put(player.getUniqueId(), System.currentTimeMillis());
+                inviteExpirations.put(target.getUniqueId(), System.currentTimeMillis() + INVITE_EXPIRATION);
+
                 if (remainingTime > 0) {
                     player.sendMessage(CU.t("&c你还需要等待 " + remainingTime + " 秒才能再次发送邀请"));
                     return true;
@@ -335,6 +375,33 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
                 if (inviterUUID == null) {
                     player.sendMessage(CU.t("&c你没有收到任何邀请"));
                     return true;
+                }
+
+                Long expirationTime = inviteExpirations.get(player.getUniqueId());
+                if (expirationTime != null && System.currentTimeMillis() > expirationTime) {
+                    Player inviter = Bukkit.getPlayer(inviterUUID);
+                    if (inviter != null) {
+                        inviter.sendMessage(CU.t("&c你发送的请求已失效"));
+                    }
+                    player.sendMessage(CU.t("&c" + inviter.getName() + " 发送的邀请已失效"));
+                    invites.remove(player.getUniqueId());
+                    inviteExpirations.remove(player.getUniqueId());
+                    return true;
+                }
+                // 移除新成员发送的所有邀请
+                invites.entrySet().removeIf(entry -> entry.getKey().equals(player.getUniqueId()));
+                inviteExpirations.entrySet().removeIf(entry -> entry.getKey().equals(player.getUniqueId()));
+
+                // 移除所有对新成员的邀请
+                invites.entrySet().removeIf(entry -> entry.getValue().equals(player.getUniqueId()));
+                inviteExpirations.entrySet().removeIf(entry -> entry.getKey().equals(player.getUniqueId()));
+
+                // 向所有邀请过新成员的玩家发送消息
+                for (UUID inviter : invites.values()) {
+                    Player inviterPlayer = Bukkit.getPlayer(inviter);
+                    if (inviterPlayer != null) {
+                        inviterPlayer.sendMessage(CU.t("&c你的邀请已失效"));
+                    }
                 }
 
                 Player inviter = Bukkit.getPlayer(inviterUUID);
@@ -367,9 +434,48 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
             } else if (args[0].equalsIgnoreCase("kick")) {
                 kickMember(player, target);
             }
+
+        }
+        if (args.length == 1 && args[0].equalsIgnoreCase("list")) {
+            if (!(sender instanceof Player)) {
+                sender.sendMessage(CU.t("&c你必须是一个玩家才能使用此命令"));
+            }
+
+
+            File teamDir = new File(plugin.getDataFolder(), "team");
+            File[] teamFiles = teamDir.listFiles();
+            if (teamFiles != null) {
+                for (File teamFile : teamFiles) {
+                    FileConfiguration teamConfig = YamlConfiguration.loadConfiguration(teamFile);
+                    String master = teamConfig.getString("master");
+                    List<String> members = teamConfig.getStringList("members");
+                    if (master.equals(player.getUniqueId().toString()) || members.contains(player.getUniqueId().toString())) {
+                        player.sendMessage(CU.t("&b岛主: &c" + Bukkit.getOfflinePlayer(UUID.fromString(master)).getName()));
+                        StringBuilder memberNames = new StringBuilder();
+                        for (String memberId : members) {
+                            memberNames.append(Bukkit.getOfflinePlayer(UUID.fromString(memberId)).getName()).append(", ");
+                        }
+                        player.sendMessage(CU.t("&b成员: &6" + memberNames.toString()));
+                        return true;
+                    }
+                }
+            }
+            player.sendMessage(CU.t("&c你不在岛屿中"));
+            return true;
+        }
+        if (args.length == 1 && args[0].equalsIgnoreCase("Help")) {
+            player.sendMessage(CU.t("&r[&bSkyBlock&r]\n" +
+                    "&6/is invite <玩家名称> &7(邀请玩家加入你的岛屿)\n" +
+                    "&6/is accept <邀请你的人的名称> &7(同意加入岛屿)\n" +
+                    "&6/is list &7(显示岛屿的所有成员)\n" +
+                    "&6/is leave &7(退出岛屿)\n" +
+                    "&6/is kick <玩家名称> &7(把玩家踢出你的岛屿)\n" +
+                    "&6/is transfer <玩家名称> &7(把岛主转让给玩家)\n" +
+                    "&6/is help &7(帮助列表)"));
         }
         return true;
     }
+
 
 
     @Override
@@ -382,9 +488,11 @@ public class IslandCommand implements CommandExecutor, TabCompleter {
         if (args.length == 1) {
             completions.add("invite");
             completions.add("accept");
-            completions.add("kick");
+            completions.add("list");
             completions.add("leave");
+            completions.add("kick");
             completions.add("transfer");
+            completions.add("help");
         } else if (args.length == 2) {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 completions.add(player.getName());
