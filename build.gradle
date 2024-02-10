@@ -3,7 +3,7 @@ plugins {
 }
 
 group = 'club.Blocklife.Touch'
-version = '1.0'
+version = '0.0.4'
 
 repositories {
     mavenCentral()

@@ -11,10 +11,12 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.scheduler.BukkitTask;
 
 import static org.bukkit.Bukkit.getScheduler;
 
 public class tpaAccept implements CommandExecutor , Listener {
+    private BukkitTask task;
     public static int num = 0;
     @EventHandler
     public void onPlayerDamage(EntityDamageEvent event) {
@@ -22,6 +24,25 @@ public class tpaAccept implements CommandExecutor , Listener {
             return;
         }
         Player player = (Player) event.getEntity();
+        Tpa.combatTime.put(player, System.currentTimeMillis() + 5000);
+        if (task != null) {
+            task.cancel();
+        }
+        task = new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (!Tpa.combatTime.containsKey(player)) {
+                    return;
+                }
+                if (Tpa.combatTime.get(player) < System.currentTimeMillis()) {
+                    Tpa.combatTime.remove(player);
+                    SkyBlockExpansion.tpaList.remove(player.getName());
+                    player.sendMessage("§f[§bSkyBlock§f]§f 您发送的请求已失效");
+                    task.cancel();
+                }
+            }
+        }.runTaskTimer(SkyBlockExpansion.getPlugin(SkyBlockExpansion.class), 0, 20);
+
         SkyBlockExpansion.DamageList.add(player);
         num = 5;
         new BukkitRunnable() {
@@ -45,7 +66,6 @@ public class tpaAccept implements CommandExecutor , Listener {
 
 
 
-
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player player = (Player) sender;
@@ -66,9 +86,6 @@ public class tpaAccept implements CommandExecutor , Listener {
                                 getScheduler().cancelTasks(SkyBlockExpansion.getPlugin(SkyBlockExpansion.class));
                             }
                         }.runTaskLater(SkyBlockExpansion.getPlugin(SkyBlockExpansion.class), 20 * 3);
-                    }else {
-                        player.sendMessage("[§bSkyblock§a]§f 您正处于战斗状态! 请在 " + num + " 秒后重试");
-                        return false;
                     }
 
 
