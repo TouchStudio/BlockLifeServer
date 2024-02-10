@@ -1,5 +1,5 @@
 name: SkyBlockExpansion
-version: '${version}'
+version: '1.0'
 main: club.blocklife.touch.skyblockexpansion.SkyBlockExpansion
 api-version: '1.20'
 softdepend: [PlaceholderAPI]
@@ -20,17 +20,17 @@ commands:
   seeinv:
     description: seeinv
   LookPlayer:
-    description: ²é¿´Íæ¼Ò
+    description: ï¿½é¿´ï¿½ï¿½ï¿½
 permissions:
   seeinv.use:
-    description: ÔÊÐí²é¿´Íæ¼Ò
+    description: ï¿½ï¿½ï¿½ï¿½é¿´ï¿½ï¿½ï¿½
     default: op
   LookPlayer.use:
-    description: ÔÊÐíÊ¹ÓÃ²é¿´Íæ¼Ò
+    description: ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½Ã²é¿´ï¿½ï¿½ï¿½
     default: true
   LookPlayer.Interact:
-    description: ÔÊÐíÍæ¼Ò½»»¥
+    description: ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò½ï¿½ï¿½ï¿½
     default: true
   LookPlayer.Admin:
-    description: ÔÊÐíÊ¹ÓÃ/LookPlayer
+    description: ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½/LookPlayer
     default: op

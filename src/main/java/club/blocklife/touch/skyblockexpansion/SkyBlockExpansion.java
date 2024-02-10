@@ -8,11 +8,10 @@ import club.blocklife.touch.skyblockexpansion.lookPlayer.PlayerListener;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 public final class SkyBlockExpansion extends JavaPlugin {
@@ -24,6 +23,7 @@ public final class SkyBlockExpansion extends JavaPlugin {
     public static Boolean PlaceholderAPI = false;
     public static List<String> tpaList = new ArrayList<>();
     public static YamlConfiguration lookPlayerconfig;
+    public static List<Player> DamageList = new ArrayList<>();
 
     public static SkyBlockExpansion getInstance() {
         return instance;
@@ -45,27 +45,27 @@ public final class SkyBlockExpansion extends JavaPlugin {
         if (!loolplayerConifgFile.exists()) {
             try {
                 loolplayerConifgFile.createNewFile();
-                FileWriter fileWriter = new FileWriter(loolplayerConifgFile);
-                fileWriter.write("#ÏÔÊ¾ÔÚÍæ¼ÒÏä×ÓGUIÉÏµÄ±êÌâ\n" +
-                        "GuiName: \"&4&lÍæ¼ÒÐÅÏ¢\"\n" +
-                        "#ÊÇ·ñ¿ªÆô¶ÜÅÆÎ»ÖÃ(1.9ÒÔÉÏ¿ªÆô)\n" +
-                        "Shield: false\n" +
-                        "#Íæ¼ÒÐÅÏ¢(×ó²àÍ·Â­)Lore×Ô¶¨Òå.Ö§³ÖPlaceholderAPI±äÁ¿  \n" +
+                OutputStreamWriter fileWriter = new OutputStreamWriter(new FileOutputStream(loolplayerConifgFile), "UTF-8");
+                fileWriter.write("#æ˜¾ç¤ºåœ¨çŽ©å®¶ç®±å­GUIä¸Šçš„æ ‡é¢˜\n" +
+                        "GuiName: \"&4&lçŽ©å®¶ä¿¡æ¯\"\n" +
+                        "#æ˜¯å¦å¼€å¯ç›¾ç‰Œä½ç½®(1.9ä»¥ä¸Šå¼€å¯)\n" +
+                        "Shield: True\n" +
+                        "#çŽ©å®¶ä¿¡æ¯(å·¦ä¾§å¤´é¢…)Loreè‡ªå®šä¹‰.æ”¯æŒPlaceholderAPIå˜é‡  \n" +
                         "#>>>   https://www.spigotmc.org/wiki/placeholderapi-placeholders/   <<<\n" +
                         "PlayerInfo:\n" +
                         "  - \"&c&M&l   &6&m&l   &e&m&l   &a&m&l   &b&m&l &a&m&l   &e&m&l   &6&m&l   &c&M&l   \"\n" +
-                        "#ÊÇ·ñ½«Ä¬ÈÏµÄÓÒ¼ü²Ù×÷ÇÐ»»ÖÁÊó±ê×ó¼ü (²»½¨Òé¿ªÆô,½«Ê¹ÓÃEntityDamageByEntityEventÊÂ¼þ)\n" +
+                        "#æ˜¯å¦å°†é»˜è®¤çš„å³é”®æ“ä½œåˆ‡æ¢è‡³é¼ æ ‡å·¦é”® (ä¸å»ºè®®å¼€å¯,å°†ä½¿ç”¨EntityDamageByEntityEventäº‹ä»¶)\n" +
                         "LeftMouse: false\n" +
                         "\n" +
                         "Message:\n" +
-                        "  NoPermission: \"¡ì6[¡ìbSkyBlockExpansion¡ì6]¡ìcÄãÃ»ÓÐÈ¨ÏÞÕâÑù×ö\"\n" +
-                        "  SuccessReload: \"¡ì6[¡ìbSkyBlockExpansion¡ì6]¡ìaÖØÔØÍê³É!\"\n" +
-                        "  FailReload: \"¡ì6[¡ìbSkyBlockExpansion¡ì6]¡ìcÖØÔØÊ§°Ü!ÇëÇ°Íù¿ØÖÆÌ¨²é¿´±¨´í.\"\n" +
+                        "  NoPermission: \"Â§6[Â§bSkyBlockExpansionÂ§6]Â§cä½ æ²¡æœ‰æƒé™è¿™æ ·åš\"\n" +
+                        "  SuccessReload: \"Â§6[Â§bSkyBlockExpansionÂ§6]Â§aé‡è½½å®Œæˆ!\"\n" +
+                        "  FailReload: \"Â§6[Â§bSkyBlockExpansionÂ§6]Â§cé‡è½½å¤±è´¥!è¯·å‰å¾€æŽ§åˆ¶å°æŸ¥çœ‹æŠ¥é”™.\"\n" +
                         "  Main:\n" +
-                        "  - \"¡ìe/LookPlayer look ¡ì6[Íæ¼Ò] ¡ì7- ¡ìb²é¿´Íæ¼ÒÐÅÏ¢\"\n" +
-                        "  - \"¡ìe/LookPlayer ¡ì6reload ¡ì7- ¡ì4ÖØÔØ²å¼þ\"\n" +
-                        "  PlayerNull: \"¡ì6[¡ìbLSkyBlockExpansion¡ì6]¡ìcÍæ¼Ò¡ìd%player%¡ìeµÄ²»´æÔÚ.\"\n" +
-                        "  Look: \"¡ì6[¡ìSkyBlockExpansion¡ì6]¡ìe²éÑ¯Íæ¼Ò¡ìd%player%¡ìeµÄÐÅÏ¢.\"");
+                        "  - \"Â§e/LookPlayer look Â§6[çŽ©å®¶] Â§7- Â§bæŸ¥çœ‹çŽ©å®¶ä¿¡æ¯\"\n" +
+                        "  - \"Â§e/LookPlayer Â§6reload Â§7- Â§4é‡è½½æ’ä»¶\"\n" +
+                        "  PlayerNull: \"Â§6[Â§bLSkyBlockExpansionÂ§6]Â§cçŽ©å®¶Â§d%player%Â§eçš„ä¸å­˜åœ¨.\"\n" +
+                        "  Look: \"Â§6[Â§SkyBlockExpansionÂ§6]Â§eæŸ¥è¯¢çŽ©å®¶Â§d%player%Â§eçš„ä¿¡æ¯.\"");
                 fileWriter.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -75,25 +75,25 @@ public final class SkyBlockExpansion extends JavaPlugin {
         if (!showitemconfigFile.exists()) {
             try {
                 showitemconfigFile.createNewFile();
-                FileWriter fileWriter = new FileWriter(showitemconfigFile);
+                OutputStreamWriter fileWriter = new OutputStreamWriter(new FileOutputStream(showitemconfigFile), "UTF-8");
                 fileWriter.write("Setting:\n" +
-                        "  #Õ¹Ê¾ÎïÆ·ÊÇ·ñÐèÒª showitem.use È¨ÏÞ\n" +
+                        "  #å±•ç¤ºç‰©å“æ˜¯å¦éœ€è¦ showitem.use æƒé™\n" +
                         "  Permission: false\n" +
-                        "  #ÊÇ·ñ¿ªÆôÔ¤ÀÀÏûÏ¢\n" +
+                        "  #æ˜¯å¦å¼€å¯é¢„è§ˆæ¶ˆæ¯\n" +
                         "  Preview: true\n" +
-                        "  #Õ¹Ê¾ÎïÆ·ÀäÈ´Ê±¼ä µ¥Î»Ãë\n" +
+                        "  #å±•ç¤ºç‰©å“å†·å´æ—¶é—´ å•ä½ç§’\n" +
                         "  CoolDown: 5\n" +
                         "\n" +
                         "Gui:\n" +
-                        "  Title: '¡ì8Õ¹Ê¾ÎïÆ· ¡ì8(°´E¹Ø±Õ½çÃæ)'\n" +
-                        "  HoverShow: '¡ìaµã»÷²é¿´'\n" +
+                        "  Title: 'Â§8å±•ç¤ºç‰©å“ Â§8(æŒ‰Eå…³é—­ç•Œé¢)'\n" +
+                        "  HoverShow: 'Â§aç‚¹å‡»æŸ¥çœ‹'\n" +
                         "\n" +
                         "Message:\n" +
-                        "  CoolDown: '¡ìcÏµÍ³¡ì7¡·¡ìcÀäÈ´ÖÐ,ÇëÉÔµÈ %cd% Ãë'\n" +
-                        "  Format: '¡ìc¹«¸æ¡ì7¡·Íæ¼Ò¡ìf %player% ¡ì7Õ¹Ê¾ÁËÎïÆ·¡ìf %itemname% ¡ì7[µã»÷²é¿´]'\n" +
-                        "  Preview: '¡ìcÏµÍ³¡ì7¡·Íæ¼Ò¡ìf %player% ¡ì7²é¿´ÁËÄãµÄ¡ìf %itemname% ¡ì7ÎïÆ·'\n" +
-                        "  ItemInHandNull: '¡ìcÏµÍ³¡ì7¡·¡ìcÄãÊÖÖÐÃ»ÓÐÎïÆ·'\n" +
-                        "  NoPermission: '¡ì4ÄãÃ»ÓÐÈ¨ÏÞÖ´ÐÐÕâ¸öÃüÁî£¡'");
+                        "  CoolDown: 'Â§cç³»ç»ŸÂ§7ã€‹Â§cå†·å´ä¸­,è¯·ç¨ç­‰ %cd% ç§’'\n" +
+                        "  Format: 'Â§cå…¬å‘ŠÂ§7ã€‹çŽ©å®¶Â§f %player% Â§7å±•ç¤ºäº†ç‰©å“Â§f %itemname% Â§7[ç‚¹å‡»æŸ¥çœ‹]'\n" +
+                        "  Preview: 'Â§cç³»ç»ŸÂ§7ã€‹çŽ©å®¶Â§f %player% Â§7æŸ¥çœ‹äº†ä½ çš„Â§f %itemname% Â§7ç‰©å“'\n" +
+                        "  ItemInHandNull: 'Â§cç³»ç»ŸÂ§7ã€‹Â§cä½ æ‰‹ä¸­æ²¡æœ‰ç‰©å“'\n" +
+                        "  NoPermission: 'Â§4ä½ æ²¡æœ‰æƒé™æ‰§è¡Œè¿™ä¸ªå‘½ä»¤ï¼'");
                 fileWriter.close();
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -107,26 +107,30 @@ public final class SkyBlockExpansion extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new DeathHead(), this);
         getServer().getPluginManager().registerEvents(new showItem(), this);
         getServer().getPluginManager().registerEvents(new onInventoryClickEvent(),this);
+        getServer().getPluginManager().registerEvents(new DanceSpeed(),this);
+        getServer().getPluginManager().registerEvents(new tpaAccept(),this);
+        getServer().getPluginManager().registerEvents(new Menu(),this);
         getCommand("showitem").setExecutor(new showItem());
         getCommand("seeinv").setExecutor(new seeInv());
         getCommand("tpa").setExecutor(new Tpa());
         getCommand("tpaccept").setExecutor(new tpaAccept());
         getCommand("tpadeny").setExecutor(new tpaDeny());
         getCommand("hat").setExecutor(new hatCommand());
+        getCommand("quit").setExecutor(new Quit());
         this.getCommand("LookPlayer").setExecutor(new LookPlayerCommand());
         this.getServer().getPluginManager().registerEvents(new PlayerListener(), this);
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             PlaceholderAPI = true;
-            Bukkit.getConsoleSender().sendMessage("¡ì6[¡ìbSkyBlockExpansion¡ì6]¡ìe¼ì²âµ½Ç°ÖÃ²å¼þPlaceholderAPI");
+            Bukkit.getConsoleSender().sendMessage("Â§6[Â§bSkyBlockExpansionÂ§6]Â§eæ£€æµ‹åˆ°å‰ç½®æ’ä»¶PlaceholderAPI");
         }
 
-        Bukkit.getConsoleSender().sendMessage("¡ì6[¡ìbSkyBlockExpansion¡ì6]¡ìa²å¼þ¼ÓÔØ");
+        Bukkit.getConsoleSender().sendMessage("Â§6[Â§bSkyBlockExpansionÂ§6]Â§aæ’ä»¶åŠ è½½");
 
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
-        Bukkit.getConsoleSender().sendMessage("¡ì6[¡ìbSkyBlockExpansion¡ì6]¡ìe²å¼þÐ¶ÔØ");
+        Bukkit.getConsoleSender().sendMessage("Â§6[Â§bSkyBlockExpansionÂ§6]Â§eæ’ä»¶å¸è½½");
     }
 }

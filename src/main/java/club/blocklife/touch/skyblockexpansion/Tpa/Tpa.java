@@ -1,6 +1,9 @@
 package club.blocklife.touch.skyblockexpansion.Tpa;
 
 import club.blocklife.touch.skyblockexpansion.SkyBlockExpansion;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,7 +16,6 @@ import static org.bukkit.Bukkit.getScheduler;
 
 public class Tpa implements CommandExecutor {
     public static Player tpaPlayer;
-    ;
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -21,23 +23,41 @@ public class Tpa implements CommandExecutor {
         if (tpaPlayer != null) {
             Player tpaTo = tpaPlayer.getServer().getPlayer(args[0]);
             if (tpaTo != null) {
-                tpaPlayer.sendMessage("¡ìa[¡ìbBlockLife¡ìa]¡ìf ÒÑ·¢ËÍ´«ËÍÇëÇó");
-                tpaTo.sendMessage("¡ìa[¡ìbBlockLife¡ìa]¡ìf Íæ¼Ò¡ìe " + tpaPlayer.getName() + " ¡ìfÇëÇó´«ËÍÖÁÄãÉí±ß ÇëÔÚ60ÃëÄÚ½ÓÊÜ \n¡ìa[¡ìbBlockLife¡ìa]¡ìf ÊäÈë/tpacceptÍ¬Òâ ÊäÈë/tpadeny¾Ü¾ø");
-                SkyBlockExpansion.tpaList.add(tpaTo.getName());
-                new BukkitRunnable() {
-                    @Override
-                    public void run() {
-                        SkyBlockExpansion.tpaList.remove(tpaTo.getName());
-                        tpaTo.sendMessage("¡ìa[¡ìbBlockLife¡ìa]¡ìf ÇëÇó¹ıÆÚ");
-                        getScheduler().cancelTasks(SkyBlockExpansion.getPlugin(SkyBlockExpansion.class));
-                    }
-                }.runTaskLater(SkyBlockExpansion.getPlugin(SkyBlockExpansion.class), 20 * 60);
-            } else {
-                tpaPlayer.sendMessage("¡ìa[¡ìbBlockLife¡ìa]¡ìf Íæ¼Ò²»ÔÚÏß»ò²»´æÔÚ");
+                if (!SkyBlockExpansion.DamageList.contains(tpaPlayer)) {
+                    tpaPlayer.sendMessage("Â§f[Â§bSkyBlockÂ§f]Â§f å·²å‘é€ä¼ é€è¯·æ±‚");
+                    TextComponent accept = new TextComponent("[åŒæ„]");
+                    accept.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpaccept"));
+
+                    TextComponent deny = new TextComponent("[æ‹’ç»]");
+                    deny.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/tpadeny"));
+
+                    TextComponent message = new TextComponent("Â§f[Â§bSkyBlockÂ§f]Â§f ç©å®¶ " + sender.getName() + " è¯·æ±‚ä¼ é€è‡³ä½ èº«è¾¹ï¼Œè¯·åœ¨60ç§’å†…æ¥å—\nÂ§f[Â§bSkyBlockÂ§f]Â§f ");
+                    message.addExtra(accept);
+                    message.addExtra("  ");
+                    message.addExtra(deny);
+                    tpaTo.spigot().sendMessage(ChatMessageType.CHAT,message);
+                    SkyBlockExpansion.tpaList.add(tpaTo.getName());
+                    new BukkitRunnable() {
+                        @Override
+                        public void run() {
+                            SkyBlockExpansion.tpaList.remove(tpaTo.getName());
+                            tpaTo.sendMessage("Â§f[Â§bSkyBlockÂ§f]Â§f è¯·æ±‚è¿‡æœŸ");
+                            getScheduler().cancelTasks(SkyBlockExpansion.getPlugin(SkyBlockExpansion.class));
+                        }
+                    }.runTaskLater(SkyBlockExpansion.getPlugin(SkyBlockExpansion.class), 20 * 60);
+                }else {
+                    ((Player) sender).getPlayer().sendMessage("[Â§bSkyblockÂ§a]Â§f æ‚¨æ­£å¤„äºæˆ˜æ–—çŠ¶æ€! è¯·åœ¨ " + tpaAccept.num + " ç§’åé‡è¯•");
+                    return false;
+
+                }
+                } else {
+                tpaPlayer.sendMessage("Â§f[Â§bSkyBlockÂ§f]Â§f ç©å®¶ä¸åœ¨çº¿æˆ–ä¸å­˜åœ¨");
+
             }
 
+
         } else {
-            Bukkit.getConsoleSender().sendMessage("¡ìa[¡ìbSkyBlockExpansion¡ìa]¡ìf ÎŞ·¨ÔÚ¿ØÖÆÌ¨Ê¹ÓÃ´ËÃüÁî");
+            Bukkit.getConsoleSender().sendMessage("Â§a[Â§bSkyBlockExpansionÂ§a]Â§f æ— æ³•åœ¨æ§åˆ¶å°ä½¿ç”¨æ­¤å‘½ä»¤");
         }
         return false;
     }

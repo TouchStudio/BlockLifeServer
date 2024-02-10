@@ -1,3 +1,3 @@
-# BlocklifeServer
+# BlockLifeServer
 ## SkyBlockExpansion
-By BaicaijunOvO
+By: Baicaijun

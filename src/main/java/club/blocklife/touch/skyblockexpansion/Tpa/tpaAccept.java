@@ -7,37 +7,77 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import static org.bukkit.Bukkit.getScheduler;
 
-public class tpaAccept implements CommandExecutor {
+public class tpaAccept implements CommandExecutor , Listener {
+    public static int num = 0;
+    @EventHandler
+    public void onPlayerDamage(EntityDamageEvent event) {
+        if (!(event.getEntity() instanceof Player)) {
+            return;
+        }
+        Player player = (Player) event.getEntity();
+        SkyBlockExpansion.DamageList.add(player);
+        num = 5;
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                SkyBlockExpansion.DamageList.remove(player);
+            }
+        }.runTaskLater(SkyBlockExpansion.instance,50L);
+        Bukkit.getScheduler().runTaskTimer(SkyBlockExpansion.instance, new Runnable() {
+            @Override
+            public void run() {
+            num -= 1;
+            if (num <= 0){
+                Bukkit.getScheduler().cancelTasks(SkyBlockExpansion.instance);
+                num = 6;
+
+            }
+            }
+        },0L,20L);
+    }
+
+
+
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         Player player = (Player) sender;
         if (player != null) {
             if (SkyBlockExpansion.tpaList.contains(player.getName())) {
-                Location tpaPlayerLocation = player.getLocation();
-                Tpa.tpaPlayer.sendMessage("¡ìa[¡ìbBlockLife¡ìa]¡ìf ½«ÔÚ3Ãëºó´«ËÍ");
-                player.sendMessage("¡ìa[¡ìbBlockLife¡ìa]¡ìf Íæ¼Ò½«ÔÚ3Ãëºó´«ËÍµ½ÄúÉí±ß");
-                new BukkitRunnable(){
+                    if (!SkyBlockExpansion.DamageList.contains(player)){
+                        Location tpaPlayerLocation = player.getLocation();
+                        Tpa.tpaPlayer.sendMessage("Â§f[Â§bSkyBlockÂ§f]Â§f å°†åœ¨3ç§’åŽä¼ é€");
+                        player.sendMessage("Â§f[Â§bSkyBlockÂ§f]Â§f çŽ©å®¶å°†åœ¨3ç§’åŽä¼ é€åˆ°æ‚¨èº«è¾¹");
+                        new BukkitRunnable(){
 
-                    @Override
-                    public void run() {
-                        Tpa.tpaPlayer.teleport(tpaPlayerLocation);
-                        SkyBlockExpansion.tpaList.remove(player.getName());
-                        Tpa.tpaPlayer.sendMessage("¡ìa[¡ìbBlockLife¡ìa]¡ìf ÒÑ´«ËÍ");
-                        player.sendMessage("¡ìa[¡ìbBlockLife¡ìa]¡ìf " + Tpa.tpaPlayer.getName() + " ÒÑ´«ËÍµ½ÄúÉí±ß");
-                        getScheduler().cancelTasks(SkyBlockExpansion.getPlugin(SkyBlockExpansion.class));
+                            @Override
+                            public void run() {
+                                Tpa.tpaPlayer.teleport(tpaPlayerLocation);
+                                SkyBlockExpansion.tpaList.remove(player.getName());
+                                Tpa.tpaPlayer.sendMessage("Â§f[Â§bSkyBlockÂ§f]Â§f å·²ä¼ é€");
+                                player.sendMessage("Â§f[Â§bSkyBlockÂ§f]Â§f " + Tpa.tpaPlayer.getName() + " å·²ä¼ é€åˆ°æ‚¨èº«è¾¹");
+                                getScheduler().cancelTasks(SkyBlockExpansion.getPlugin(SkyBlockExpansion.class));
+                            }
+                        }.runTaskLater(SkyBlockExpansion.getPlugin(SkyBlockExpansion.class), 20 * 3);
+                    }else {
+                        player.sendMessage("[Â§bSkyblockÂ§a]Â§f æ‚¨æ­£å¤„äºŽæˆ˜æ–—çŠ¶æ€! è¯·åœ¨ " + num + " ç§’åŽé‡è¯•");
+                        return false;
                     }
-                }.runTaskLater(SkyBlockExpansion.getPlugin(SkyBlockExpansion.class), 20 * 3);
+
 
             } else {
-                player.sendMessage("¡ìa[¡ìbBlockLife¡ìa]¡ìf ÄúÃ»ÓÐ´«ËÍÇëÇó");
+                player.sendMessage("Â§f[Â§bSkyBlockÂ§f]Â§f æ‚¨æ²¡æœ‰ä¼ é€è¯·æ±‚");
             }
 
         } else {
-            Bukkit.getConsoleSender().sendMessage("¡ìa[¡ìbSkyBlockExpansion¡ìa]¡ìf ÎÞ·¨ÔÚ¿ØÖÆÌ¨Ê¹ÓÃ´ËÃüÁî");
+            Bukkit.getConsoleSender().sendMessage("Â§a[Â§bSkyBlockExpansionÂ§a]Â§f æ— æ³•åœ¨æŽ§åˆ¶å°ä½¿ç”¨æ­¤å‘½ä»¤");
         }
         return false;
     }

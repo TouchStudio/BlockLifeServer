@@ -14,13 +14,13 @@ public class tpaDeny implements CommandExecutor {
         Player player = (Player) sender;
         if (player != null) {
             if (SkyBlockExpansion.tpaList.contains(player.getName())) {
-                player.sendMessage("¡ìa[¡ìbBlockLife¡ìa]¡ìf ÒÑ¾Ü¾ø´«ËÍÇëÇó");
+                player.sendMessage("Â§f[Â§bSkyBlockÂ§f]Â§f å·²æ‹’ç»ä¼ é€è¯·æ±‚");
                 SkyBlockExpansion.tpaList.remove(player.getName());
             } else {
-                player.sendMessage("¡ìa[¡ìbBlockLife¡ìa]¡ìf ÄúÃ»ÓĞ´«ËÍÇëÇó");
+                player.sendMessage("Â§f[Â§bSkyBlockÂ§f]Â§f æ‚¨æ²¡æœ‰ä¼ é€è¯·æ±‚");
             }
         } else {
-            Bukkit.getConsoleSender().sendMessage("¡ìa[¡ìbSkyBlockExpansion¡ìa]¡ìf ÎŞ·¨ÔÚ¿ØÖÆÌ¨Ê¹ÓÃ´ËÃüÁî");
+            Bukkit.getConsoleSender().sendMessage("Â§a[Â§bSkyBlockExpansionÂ§a]Â§f æ— æ³•åœ¨æ§åˆ¶å°ä½¿ç”¨æ­¤å‘½ä»¤");
         }
 
         return false;
