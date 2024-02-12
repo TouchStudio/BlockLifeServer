@@ -1,5 +1,5 @@
 name: SkyblockMobs
-version: '${version}'
+version: '1.0'
 main: club.blocklife.touch.SkyblockMobs
 api-version: '1.20'
 
